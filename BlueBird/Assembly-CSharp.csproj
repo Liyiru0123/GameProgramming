@@ -64,7 +64,26 @@
     <Analyzer Include="C:\Program Files\Unity 2022.3.62f3\Editor\Data\Tools\Unity.SourceGenerators\Unity.Properties.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\Collision.cs" />
+    <Compile Include="Assets\DOTween\Modules\DOTweenModuleAudio.cs" />
+    <Compile Include="Assets\DOTween\Modules\DOTweenModuleUnityVersion.cs" />
+    <Compile Include="Assets\DOTween\Modules\DOTweenModulePhysics.cs" />
+    <Compile Include="Assets\Scripts\AnimationScript.cs" />
+    <Compile Include="Assets\Scripts\Movement.cs" />
+    <Compile Include="Assets\Scripts\BetterJumping.cs" />
     <Compile Include="Assets\PlayerMovement.cs" />
+    <Compile Include="Assets\DOTween\Modules\DOTweenModulePhysics2D.cs" />
+    <Compile Include="Assets\DOTween\Modules\DOTweenModuleUI.cs" />
+    <Compile Include="Assets\Scripts\GhostTrail.cs" />
+    <Compile Include="Assets\DOTween\Modules\DOTweenModuleSprite.cs" />
+    <Compile Include="Assets\Scripts\RippleEffect\RippleEffect.cs" />
+    <Compile Include="Assets\DOTween\Modules\DOTweenModuleUtils.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\DOTween\DOTween.XML" />
+    <None Include="Assets\Scripts\RippleEffect\RippleEffect.shader" />
+    <None Include="Assets\DOTween\DOTween.dll" />
+    <None Include="Assets\DOTween\readme.txt" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
@@ -405,6 +424,10 @@
     </Reference>
     <Reference Include="Unity.VisualScripting.Antlr3.Runtime">
       <HintPath>Library\PackageCache\com.unity.visualscripting@1.9.4\Runtime\VisualScripting.Flow\Dependencies\NCalc\Unity.VisualScripting.Antlr3.Runtime.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="DOTween">
+      <HintPath>Assets\DOTween\DOTween.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="netstandard">
