@@ -5,6 +5,9 @@ using DG.Tweening;
 public class Movement : MonoBehaviour
 {
     private const float DefaultGravityScale = 3f;
+    private const float WallJumpInputThreshold = 0.1f;
+    private const float UpwardWallJumpHorizontalPush = 0.2f;
+    private const float UpwardWallJumpVerticalMultiplier = 1.1f;
 
     private Collision coll;
     [HideInInspector] public Rigidbody2D rb;
@@ -53,6 +56,7 @@ public class Movement : MonoBehaviour
     private float jumpBufferCounter;
     private float wallClimbTimeRemaining;
     private bool hasBeenAirborne;
+    private Coroutine movementLockCoroutine;
 
     void Start()
     {
@@ -108,7 +112,7 @@ public class Movement : MonoBehaviour
         }
 
         UpdateWallState(y, wallGrabHeld);
-        HandleBufferedJump();
+        HandleBufferedJump(xRaw, yRaw);
         HandleDashInput(dashPressed, xRaw, yRaw);
         WallParticle(y);
 
@@ -190,15 +194,9 @@ public class Movement : MonoBehaviour
 
         rb.gravityScale = DefaultGravityScale;
         RecoverWallClimb(verticalInput);
-
-        if (touchingWallInAir && rb.velocity.y < 0f)
-        {
-            wallSlide = true;
-            WallSlide();
-        }
     }
 
-    private void HandleBufferedJump()
+    private void HandleBufferedJump(float xRaw, float yRaw)
     {
         if (jumpBufferCounter <= 0f || isDashing)
         {
@@ -208,7 +206,7 @@ public class Movement : MonoBehaviour
         if (coll.onWall && !coll.onGround)
         {
             anim.SetTrigger("jump");
-            WallJump();
+            WallJump(xRaw, yRaw);
             jumpBufferCounter = 0f;
             return;
         }
@@ -323,45 +321,40 @@ public class Movement : MonoBehaviour
         }
     }
 
-    private void WallJump()
+    private void WallJump(float horizontalInput, float verticalInput)
     {
-        if ((side == 1 && coll.onRightWall) || (side == -1 && !coll.onRightWall))
+        Vector2 wallDir = coll.onRightWall ? Vector2.left : Vector2.right;
+        bool pressingAwayFromWall =
+            (coll.onLeftWall && horizontalInput > WallJumpInputThreshold) ||
+            (coll.onRightWall && horizontalInput < -WallJumpInputThreshold);
+        bool pressingUp = verticalInput > WallJumpInputThreshold;
+
+        Vector2 jumpDirection;
+        float movementLockDuration;
+
+        if (pressingUp || !pressingAwayFromWall)
         {
-            side *= -1;
-            anim.Flip(side);
+            jumpDirection = new Vector2(wallDir.x * UpwardWallJumpHorizontalPush, UpwardWallJumpVerticalMultiplier);
+            movementLockDuration = 0.08f;
+        }
+        else
+        {
+            jumpDirection = Vector2.up + wallDir;
+            movementLockDuration = 0.1f;
         }
 
-        StopCoroutine(DisableMovement(0f));
-        StartCoroutine(DisableMovement(.1f));
-
-        Vector2 wallDir = coll.onRightWall ? Vector2.left : Vector2.right;
-        Jump((Vector2.up / 1.5f + wallDir / 1.5f), true);
+        side = wallDir.x > 0f ? 1 : -1;
+        anim.Flip(side);
+        LockMovement(movementLockDuration);
+        Jump(jumpDirection.normalized, true);
 
         wallJumped = true;
         coyoteCounter = 0f;
     }
 
-    private void WallSlide()
-    {
-        FaceAwayFromWall();
-
-        if (!canMove)
-        {
-            return;
-        }
-
-        float horizontalVelocity = rb.velocity.x;
-        if ((horizontalVelocity > 0f && coll.onRightWall) || (horizontalVelocity < 0f && coll.onLeftWall))
-        {
-            horizontalVelocity = 0f;
-        }
-
-        rb.velocity = new Vector2(horizontalVelocity, Mathf.Max(rb.velocity.y, -slideSpeed));
-    }
-
     private void Walk(Vector2 dir)
     {
-        if (!canMove || wallGrab)
+        if (!canMove || wallGrab || isDashing)
         {
             return;
         }
@@ -393,7 +386,18 @@ public class Movement : MonoBehaviour
     {
         canMove = false;
         yield return new WaitForSeconds(time);
+        movementLockCoroutine = null;
         canMove = true;
+    }
+
+    private void LockMovement(float time)
+    {
+        if (movementLockCoroutine != null)
+        {
+            StopCoroutine(movementLockCoroutine);
+        }
+
+        movementLockCoroutine = StartCoroutine(DisableMovement(time));
     }
 
     void RigidbodyDrag(float x)
@@ -427,9 +431,10 @@ public class Movement : MonoBehaviour
 
     void FaceAwayFromWall()
     {
-        if (coll.wallSide != 0 && coll.wallSide != side)
+        if (coll.wallSide != 0)
         {
-            anim.Flip(side * -1);
+            side = coll.wallSide;
+            anim.Flip(side);
         }
     }
 
@@ -476,6 +481,7 @@ public class Movement : MonoBehaviour
     private void ResetMotionState()
     {
         StopAllCoroutines();
+        movementLockCoroutine = null;
 
         wallGrab = false;
         wallJumped = false;
