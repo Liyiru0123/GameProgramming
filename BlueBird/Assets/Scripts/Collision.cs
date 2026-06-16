@@ -1,15 +1,12 @@
-﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Collision : MonoBehaviour
 {
-
     [Header("Layers")]
     public LayerMask groundLayer;
+    public LayerMask wallLayer;
 
     [Space]
-
     public bool onGround;
     public bool onWall;
     public bool onRightWall;
@@ -17,40 +14,40 @@ public class Collision : MonoBehaviour
     public int wallSide;
 
     [Space]
-
     [Header("Collision")]
+    public Vector2 groundCheckSize = new Vector2(0.5f, 0.12f);
+    public Vector2 wallCheckSize = new Vector2(0.12f, 0.7f);
+    public Vector2 bottomOffset;
+    public Vector2 rightOffset;
+    public Vector2 leftOffset;
+    public bool drawDebugGizmos = true;
 
-    public float collisionRadius = 0.25f;
-    public Vector2 bottomOffset, rightOffset, leftOffset;
-    private Color debugCollisionColor = Color.red;
+    private LayerMask ActiveWallLayer => wallLayer.value == 0 ? groundLayer : wallLayer;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
     void Update()
-    {  
-        onGround = Physics2D.OverlapCircle((Vector2)transform.position + bottomOffset, collisionRadius, groundLayer);
-        onWall = Physics2D.OverlapCircle((Vector2)transform.position + rightOffset, collisionRadius, groundLayer) 
-            || Physics2D.OverlapCircle((Vector2)transform.position + leftOffset, collisionRadius, groundLayer);
+    {
+        Vector2 position = transform.position;
 
-        onRightWall = Physics2D.OverlapCircle((Vector2)transform.position + rightOffset, collisionRadius, groundLayer);
-        onLeftWall = Physics2D.OverlapCircle((Vector2)transform.position + leftOffset, collisionRadius, groundLayer);
+        onGround = Physics2D.OverlapBox(position + bottomOffset, groundCheckSize, 0f, groundLayer);
+        onRightWall = Physics2D.OverlapBox(position + rightOffset, wallCheckSize, 0f, ActiveWallLayer);
+        onLeftWall = Physics2D.OverlapBox(position + leftOffset, wallCheckSize, 0f, ActiveWallLayer);
 
-        wallSide = onRightWall ? -1 : 1;
+        onWall = onRightWall || onLeftWall;
+        wallSide = onRightWall ? -1 : (onLeftWall ? 1 : 0);
     }
 
     void OnDrawGizmos()
     {
+        if (!drawDebugGizmos)
+        {
+            return;
+        }
+
         Gizmos.color = Color.red;
+        Gizmos.DrawWireCube((Vector2)transform.position + bottomOffset, groundCheckSize);
 
-        var positions = new Vector2[] { bottomOffset, rightOffset, leftOffset };
-
-        Gizmos.DrawWireSphere((Vector2)transform.position  + bottomOffset, collisionRadius);
-        Gizmos.DrawWireSphere((Vector2)transform.position + rightOffset, collisionRadius);
-        Gizmos.DrawWireSphere((Vector2)transform.position + leftOffset, collisionRadius);
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawWireCube((Vector2)transform.position + rightOffset, wallCheckSize);
+        Gizmos.DrawWireCube((Vector2)transform.position + leftOffset, wallCheckSize);
     }
 }

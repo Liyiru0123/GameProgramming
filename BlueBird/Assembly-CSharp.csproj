@@ -65,25 +65,34 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\Collision.cs" />
-    <Compile Include="Assets\DOTween\Modules\DOTweenModuleAudio.cs" />
-    <Compile Include="Assets\DOTween\Modules\DOTweenModuleUnityVersion.cs" />
-    <Compile Include="Assets\DOTween\Modules\DOTweenModulePhysics.cs" />
+    <Compile Include="Assets\Scripts\RoomTrigger.cs" />
+    <Compile Include="Assets\Scripts\RuntimeGameUI.cs" />
+    <Compile Include="Assets\Scripts\PlayerAudio.cs" />
+    <Compile Include="Assets\Scripts\PlayerAbilities.cs" />
+    <Compile Include="Assets\Scripts\PlayerRespawn.cs" />
+    <Compile Include="Assets\Scripts\RoomBackgroundBuilder.cs" />
     <Compile Include="Assets\Scripts\AnimationScript.cs" />
+    <Compile Include="Assets\Scripts\RuntimeServicesBootstrap.cs" />
     <Compile Include="Assets\Scripts\Movement.cs" />
+    <Compile Include="Assets\Scripts\GameSession.cs" />
+    <Compile Include="Assets\Scripts\MenuSceneController.cs" />
     <Compile Include="Assets\Scripts\BetterJumping.cs" />
-    <Compile Include="Assets\PlayerMovement.cs" />
-    <Compile Include="Assets\DOTween\Modules\DOTweenModulePhysics2D.cs" />
-    <Compile Include="Assets\DOTween\Modules\DOTweenModuleUI.cs" />
+    <Compile Include="Assets\BGM_Manager.cs" />
+    <Compile Include="Assets\Scripts\Checkpoint.cs" />
     <Compile Include="Assets\Scripts\GhostTrail.cs" />
-    <Compile Include="Assets\DOTween\Modules\DOTweenModuleSprite.cs" />
+    <Compile Include="Assets\Scripts\DisappearingPlatform.cs" />
+    <Compile Include="Assets\Scripts\MovingPlatform.cs" />
+    <Compile Include="Assets\Scripts\SaveGameSystem.cs" />
+    <Compile Include="Assets\Scripts\GameInput.cs" />
+    <Compile Include="Assets\Scripts\Spike.cs" />
     <Compile Include="Assets\Scripts\RippleEffect\RippleEffect.cs" />
-    <Compile Include="Assets\DOTween\Modules\DOTweenModuleUtils.cs" />
+    <Compile Include="Assets\Scripts\RoomCameraController.cs" />
+    <Compile Include="Assets\Scripts\Player\PlayerMovement.cs" />
+    <Compile Include="Assets\Scripts\AbilityPickup.cs" />
+    <Compile Include="Assets\Bgm_Trigger.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\DOTween\DOTween.XML" />
     <None Include="Assets\Scripts\RippleEffect\RippleEffect.shader" />
-    <None Include="Assets\DOTween\DOTween.dll" />
-    <None Include="Assets\DOTween\readme.txt" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
@@ -427,7 +436,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="DOTween">
-      <HintPath>Assets\DOTween\DOTween.dll</HintPath>
+      <HintPath>Assets\Plugins\DOTween\DOTween.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="netstandard">
@@ -1092,6 +1101,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="Assembly-CSharp-firstpass.csproj" />
   </ItemGroup>
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
   <ItemGroup>
