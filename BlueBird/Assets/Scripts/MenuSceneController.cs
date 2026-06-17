@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -36,12 +37,18 @@ public class MenuSceneController : MonoBehaviour
     [SerializeField] private Button startNewGameButton;
     [SerializeField] private Button continueButton;
     [SerializeField] private Button openSettingsButton;
+    [SerializeField] private Button exitButton;
     [SerializeField] private Button slotBackButton;
     [SerializeField] private Button settingsBackButton;
 
     [Header("Status")]
     [SerializeField] private Text slotTitleText;
     [SerializeField] private Text statusText;
+
+    [Header("Presentation")]
+    [SerializeField] private Image fadeOverlay;
+    [SerializeField] private AudioSource menuMusicSource;
+    [SerializeField] private AudioClip menuMusicClip;
 
     [Header("Slots")]
     [SerializeField] private Button[] slotButtons = Array.Empty<Button>();
@@ -55,6 +62,7 @@ public class MenuSceneController : MonoBehaviour
     private readonly Dictionary<GameInput.ActionName, BindingEntry> bindingLookup =
         new Dictionary<GameInput.ActionName, BindingEntry>();
 
+    private bool isTransitioning;
     private SlotMode currentSlotMode;
 
     private void Awake()
@@ -64,6 +72,19 @@ public class MenuSceneController : MonoBehaviour
         ApplySavedVolume();
         RefreshSettingsLabels();
         ShowMainPanel();
+    }
+
+    private void Start()
+    {
+        PlayMenuMusic();
+
+        if (fadeOverlay == null)
+        {
+            return;
+        }
+
+        SetFadeAlpha(1f);
+        StartCoroutine(FadeOverlayRoutine(0f, 0.45f));
     }
 
     private void CacheBindingLookup()
@@ -85,6 +106,7 @@ public class MenuSceneController : MonoBehaviour
         WireButton(startNewGameButton, OnStartNewGame);
         WireButton(continueButton, OnOpenContinueSlots);
         WireButton(openSettingsButton, OnOpenSettings);
+        WireButton(exitButton, OnExitGame);
         WireButton(slotBackButton, OnBackToMain);
         WireButton(settingsBackButton, OnBackToMain);
 
@@ -152,6 +174,11 @@ public class MenuSceneController : MonoBehaviour
         ShowMainPanel();
     }
 
+    public void OnExitGame()
+    {
+        StartCoroutine(TransitionOut(ExitGame));
+    }
+
     private void ShowMainPanel()
     {
         if (mainPanel != null) mainPanel.SetActive(true);
@@ -208,9 +235,12 @@ public class MenuSceneController : MonoBehaviour
 
     private void LoadGameplayScene()
     {
-        Time.timeScale = 1f;
-        GameSession.SetGameplayInputBlocked(false);
-        SceneManager.LoadScene(GameplaySceneName);
+        StartCoroutine(TransitionOut(() =>
+        {
+            Time.timeScale = 1f;
+            GameSession.SetGameplayInputBlocked(false);
+            SceneManager.LoadScene(GameplaySceneName);
+        }));
     }
 
     private void RefreshSlotButtons()
@@ -296,6 +326,89 @@ public class MenuSceneController : MonoBehaviour
     private void ApplySavedVolume()
     {
         AudioListener.volume = PlayerPrefs.GetFloat(MasterVolumeKey, 0.8f);
+    }
+
+    private void PlayMenuMusic()
+    {
+        if (menuMusicSource == null || menuMusicClip == null)
+        {
+            return;
+        }
+
+        menuMusicSource.clip = menuMusicClip;
+        menuMusicSource.loop = true;
+        menuMusicSource.playOnAwake = false;
+        menuMusicSource.volume = 0.18f;
+
+        if (!menuMusicSource.isPlaying)
+        {
+            menuMusicSource.Play();
+        }
+    }
+
+    private IEnumerator TransitionOut(Action onComplete)
+    {
+        if (isTransitioning)
+        {
+            yield break;
+        }
+
+        isTransitioning = true;
+
+        if (fadeOverlay != null)
+        {
+            yield return FadeOverlayRoutine(1f, 0.28f);
+        }
+
+        onComplete?.Invoke();
+    }
+
+    private IEnumerator FadeOverlayRoutine(float targetAlpha, float duration)
+    {
+        if (fadeOverlay == null)
+        {
+            yield break;
+        }
+
+        Color color = fadeOverlay.color;
+        float startAlpha = color.a;
+        float elapsed = 0f;
+        fadeOverlay.raycastTarget = true;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            float t = duration <= 0f ? 1f : Mathf.Clamp01(elapsed / duration);
+            color.a = Mathf.Lerp(startAlpha, targetAlpha, t);
+            fadeOverlay.color = color;
+            yield return null;
+        }
+
+        color.a = targetAlpha;
+        fadeOverlay.color = color;
+        fadeOverlay.raycastTarget = targetAlpha > 0.01f;
+    }
+
+    private void SetFadeAlpha(float alpha)
+    {
+        if (fadeOverlay == null)
+        {
+            return;
+        }
+
+        Color color = fadeOverlay.color;
+        color.a = alpha;
+        fadeOverlay.color = color;
+        fadeOverlay.raycastTarget = alpha > 0.01f;
+    }
+
+    private static void ExitGame()
+    {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
     }
 }
 #pragma warning restore CS0649

@@ -13,6 +13,10 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (DialogueManager.Instance != null && DialogueManager.Instance.IsDialogueActive())
+        {
+            return;
+        }
         float dirX = Input.GetAxisRaw("Horizontal");
         rb.velocity = new Vector2(7f * dirX, rb.velocity.y);
         if (Input.GetButtonDown("Jump"))

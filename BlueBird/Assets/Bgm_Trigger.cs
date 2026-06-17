@@ -4,11 +4,20 @@ public class RoomBGMTrigger : MonoBehaviour
 {
     public AudioClip roomBGM;
 
-    private void OnTriggerEnter2D(Collider2D other)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (other.CompareTag("Player"))
+        Debug.Log("进入 BGM 触发器：" + collision.name);
+
+        if (!collision.CompareTag("Player")) return;
+
+        if (roomBGM == null)
         {
-            BGMManager.Instance.ChangeBGM(roomBGM);
+            Debug.LogError("这个房间触发器没有设置 roomBGM！");
+            return;
         }
+
+        Debug.Log("准备切换 BGM：" + roomBGM.name);
+
+        BGMManager.Instance.ChangeBGM(roomBGM);
     }
 }

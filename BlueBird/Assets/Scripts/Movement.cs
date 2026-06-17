@@ -74,6 +74,10 @@ public class Movement : MonoBehaviour
 
     void Update()
     {
+        if (DialogueManager.Instance != null && DialogueManager.Instance.IsDialogueActive())
+        {
+            return;
+        }
         if (gameInput == null)
         {
             gameInput = GameInput.Instance;

@@ -27,21 +27,38 @@ public class BGMManager : MonoBehaviour
     }
 
     public void ChangeBGM(AudioClip newClip)
+{
+    Debug.Log("ChangeBGM 被调用");
+
+    if (newClip == null)
     {
-        if (newClip == null) return;
-
-        if (currentClip == newClip) return;
-
-        currentClip = newClip;
-
-        if (fadeCoroutine != null)
-        {
-            StopCoroutine(fadeCoroutine);
-        }
-
-        fadeCoroutine = StartCoroutine(FadeToNewBGM(newClip));
+        Debug.LogError("newClip 是空的，无法播放 BGM");
+        return;
     }
 
+    if (audioSource == null)
+    {
+        Debug.LogError("BGMManager 没有 AudioSource");
+        return;
+    }
+
+    if (currentClip == newClip && audioSource.isPlaying)
+    {
+        Debug.Log("当前 BGM 已经在播放，不重复播放");
+        return;
+    }
+
+    Debug.Log("开始播放 BGM：" + newClip.name);
+
+    currentClip = newClip;
+
+    if (fadeCoroutine != null)
+    {
+        StopCoroutine(fadeCoroutine);
+    }
+
+    fadeCoroutine = StartCoroutine(FadeToNewBGM(newClip));
+}
     private IEnumerator FadeToNewBGM(AudioClip newClip)
     {
         float startVolume = audioSource.volume;
