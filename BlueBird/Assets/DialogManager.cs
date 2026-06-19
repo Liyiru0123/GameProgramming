@@ -1,12 +1,14 @@
 using System.Collections;
 using UnityEngine;
 using TMPro;
+using System;
 
 public class DialogueManager : MonoBehaviour
 {
     public static DialogueManager Instance;
 
     [Header("UI")]
+    private Action onDialogueEnd;
     public GameObject dialoguePanel;
     public TMP_Text speakerNameText;
     public TMP_Text dialogueText;
@@ -31,6 +33,7 @@ public class DialogueManager : MonoBehaviour
         {
             dialoguePanel.SetActive(false);
         }
+        
     }
 
     private void Update()
@@ -50,8 +53,17 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
-    public void StartDialogue(string speaker, string[] lines)
+    public void StartDialogue(string speaker, string[] lines, Action endCallback = null)
     {
+        onDialogueEnd = endCallback;
+        Debug.Log("StartDialogue 被调用了");
+
+        if (lines == null || lines.Length == 0)
+        {
+            Debug.LogWarning("Dialogue lines 是空的");
+            return;
+        }
+
         if (lines == null || lines.Length == 0) return;
 
         speakerName = speaker;
@@ -119,6 +131,9 @@ public class DialogueManager : MonoBehaviour
     {
         isDialogueActive = false;
         dialoguePanel.SetActive(false);
+
+        onDialogueEnd?.Invoke();
+        onDialogueEnd = null;
     }
 
     public bool IsDialogueActive()

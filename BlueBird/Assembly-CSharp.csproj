@@ -88,8 +88,9 @@
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_PhoneNumberValidator.cs" />
     <Compile Include="Assets\Scripts\AnimationScript.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexJitter.cs" />
-    <Compile Include="Assets\Scripts\RuntimeServicesBootstrap.cs" />
     <Compile Include="Assets\dialogTrigger.cs" />
+    <Compile Include="Assets\Scripts\RuntimeServicesBootstrap.cs" />
+    <Compile Include="Assets\EndManager.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_DigitValidator.cs" />
     <Compile Include="Assets\Scripts\Movement.cs" />
     <Compile Include="Assets\Scripts\GameSession.cs" />
@@ -111,6 +112,7 @@
     <Compile Include="Assets\Scripts\DisappearingPlatform.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\SkewTextExample.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\WarpTextExample.cs" />
+    <Compile Include="Assets\FinalDialogTrigger.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TextMeshProFloatingText.cs" />
     <Compile Include="Assets\Scripts\MovingPlatform.cs" />
     <Compile Include="Assets\Scripts\SaveGameSystem.cs" />

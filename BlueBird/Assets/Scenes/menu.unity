@@ -2737,7 +2737,7 @@ MonoBehaviour:
   statusText: {fileID: 225586646}
   fadeOverlay: {fileID: 2147300402}
   menuMusicSource: {fileID: 911526909}
-  menuMusicClip: {fileID: 8300000, guid: d8eb44d41a99f1a4484f3e19ea36a1b0, type: 3}
+  menuMusicClip: {fileID: 8300000, guid: 4c4122c12b34651468de87448c272403, type: 3}
   slotButtons:
   - {fileID: 1984423452}
   - {fileID: 1873709902}
@@ -2802,7 +2802,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: d8eb44d41a99f1a4484f3e19ea36a1b0, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 4c4122c12b34651468de87448c272403, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 0.18
   m_Pitch: 1

@@ -78,7 +78,7 @@ public class PlayerRespawn : MonoBehaviour
 
     private void Start()
     {
-        initialSpawnPoint = defaultSpawnPoint != null ? defaultSpawnPoint.position : transform.position;
+        initialSpawnPoint = new Vector2(-9.14f, -3.91f);
         currentRespawnPoint = initialSpawnPoint;
     }
 

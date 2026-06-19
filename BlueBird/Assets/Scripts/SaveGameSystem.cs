@@ -26,7 +26,8 @@ public class SaveGameSystem : MonoBehaviour
     private const string SlotKeyPrefix = "save_slot_";
 
     private static SaveGameSystem instance;
-
+    [Header("Fresh Game Spawn")]
+    [SerializeField] private Vector3 freshGameSpawnPosition = new Vector2(-9.14f, -3.91f);
     private int activeSlot = -1;
     private bool suppressSave;
     private PendingRestoreMode pendingRestoreMode;
@@ -175,9 +176,10 @@ public class SaveGameSystem : MonoBehaviour
     private bool ApplyFreshGameState()
     {
         PlayerRespawn playerRespawn = FindPlayerRespawn();
-        if (playerRespawn == null)
+        
+        if (playerRespawn != null)
         {
-            return false;
+            playerRespawn.TeleportTo(freshGameSpawnPosition);
         }
 
         suppressSave = true;
@@ -209,6 +211,7 @@ public class SaveGameSystem : MonoBehaviour
         suppressSave = false;
         return true;
     }
+    
 
     private bool ApplySlotData(SlotData data)
     {
